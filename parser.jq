@@ -68,11 +68,12 @@ def parse:
     $allFiles | filterInstanceReferences
     ;
 
-def type_toDot:
-    "\(keys | .[0]) -> test"
+def type_toDot($typeName; $references):
+    collect_string("\($typeName) -> \($references | .[]);")
     ;
+
 def file_toDot:
-    "\( .[] | type_toDot )"
+    "\(.[] | to_entries | .[] | type_toDot(.key; .value))"
     ;
 def toDot:
     collect_string(file_toDot) as $filesDot |
