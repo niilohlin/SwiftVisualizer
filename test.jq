@@ -12,6 +12,7 @@ def oneFileExample:
         "key.substructure": [
             {
                 "key.name": "swiftClass",
+                "key.kind": "source.lang.swift.decl.class",
                 "key.substructure": [
                     {
                         "key.typename": "other_class",
@@ -21,6 +22,7 @@ def oneFileExample:
             },
             {
                 "key.name": "other_class",
+                "key.kind": "source.lang.swift.decl.class",
                 "key.substructure": [
                     {
                         "key.typename": "Int",
@@ -48,6 +50,7 @@ def multipleFilesExample:
         "key.substructure": [
             {
                 "key.name": "swiftClass",
+                "key.kind": "source.lang.swift.decl.class",
                 "key.substructure": [
                     {
                         "key.typename": "other_class",
@@ -62,6 +65,7 @@ def multipleFilesExample:
         "key.substructure": [
             {
                 "key.name": "other_class",
+                "key.kind": "source.lang.swift.decl.class",
                 "key.substructure": [ ]
             }
         ]
@@ -78,12 +82,38 @@ def multipleFilesExpected: {
             }
         };
 
+def extensionsExample:
+    [
+    { "file1.swift": {
+        "key.substructure": [
+            {
+                "key.name": "swiftClass",
+                "key.kind": "source.lang.swift.decl.extension",
+                "key.substructure": [
+                    {
+                        "key.typename": "other_class",
+                        "key.kind": "source.lang.swift.decl.var.instance"
+                    }
+                ]
+            }
+        ]
+    }
+    }
+    ];
+
+def extensionsExpected: {
+        "file1.swift": { }
+        };
+
+def testParse_shouldIgnoreExtensions: (extensionsExample | parse ) == extensionsExpected;
+
 def testParse_shouldFilterTypesInDifferentFiles: (multipleFilesExample | parse) == multipleFilesExpected;
 
 {
     testGetFileName: testGetFileName,
     testGetTypeName: testGetTypeName,
     testParse_shouldFilterTypesInSameFile: testParse_shouldFilterTypesInSameFile,
-    testParse_shouldFilterTypesInDifferentFiles: testParse_shouldFilterTypesInDifferentFiles
+    testParse_shouldFilterTypesInDifferentFiles: testParse_shouldFilterTypesInDifferentFiles,
+    testParse_shouldIgnoreExtensions: testParse_shouldIgnoreExtensions
 }
 

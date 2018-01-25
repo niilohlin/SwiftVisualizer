@@ -43,12 +43,18 @@ def filterInstanceReferences:
     $files | map_values(map_values(filter))
     ;
 
+def filterTypes: select(.["key.kind"] == "source.lang.swift.decl.protocol"
+                    or .["key.kind"] == "source.lang.swift.decl.class"
+                    or .["key.kind"] == "source.lang.swift.decl.struct"
+                    or .["key.kind"] == "source.lang.swift.decl.enumcase"
+                    ) ;
+
 def parse:
     def parseFile:
         getFile as $file |
         $file | getFileName as $fileName |
         def parseTypes:
-            $file | getType as $type |
+            $file | getType | filterTypes as $type |
             $type | getTypeName as $typeName |
             { ( $typeName ): $type | getInstanceReferences }
             ;
@@ -59,6 +65,7 @@ def parse:
     $allFiles | filterInstanceReferences
     ;
 #parse
+
 
 
 
