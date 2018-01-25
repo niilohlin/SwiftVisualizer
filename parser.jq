@@ -25,15 +25,22 @@ def getInstanceReferences: [
     ] |
     unique;
 
+def collect_object(func):
+    ([. | func] | reduce .[] as $o ({}; $o + .));
+
+def collect_array(func):
+    ([. | func] | reduce .[] as $o ([]; $o + .));
+
 def filterInstanceReferences:
-    . as $types |
-    $types | keys as $keys |
+    . as $files |
+    $files | .[] as $types |
+    $files | collect_array(.[] | keys) as $keys |
     def filter:
         reduce .[] as $reference ([]; if ($keys | contains([$reference]))
                 then ([$reference] + .)
                 else . end
         );
-    $types | map_values(filter)
+    $files | map_values(map_values(filter))
     ;
 
 def parse:
@@ -45,10 +52,11 @@ def parse:
             $type | getTypeName as $typeName |
             { ( $typeName ): $type | getInstanceReferences }
             ;
-        ([. | parseTypes] | reduce .[] as $o ({}; $o + .)) as $allTypes |
-        {($fileName): ($allTypes )}
+        collect_object(parseTypes) as $allTypes |
+        {($fileName): $allTypes}
         ;
-    parseFile | map_values(filterInstanceReferences)
+    collect_object(parseFile) as $allFiles |
+    $allFiles | filterInstanceReferences
     ;
 #parse
 
