@@ -1,3 +1,0 @@
-
-test:
-	cat jq -f
