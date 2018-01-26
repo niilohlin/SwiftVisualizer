@@ -77,10 +77,8 @@ def file_toDot:
     ;
 def toDot:
     collect_string(file_toDot) as $filesDot |
-    "digraph G { \($filesDot)}";
+    "digraph G { \nratio=0.7; \n \($filesDot)}";
+
 
 [. | parse][0] | toDot
-
-
-
 
